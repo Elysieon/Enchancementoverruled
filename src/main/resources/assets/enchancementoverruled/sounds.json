@@ -1,0 +1,10 @@
+{
+  "entity.generic.stenosis": {
+    "sounds": [
+      {
+        "name": "enchancementoverruled:spine"
+      }
+    ],
+    "subtitle": "subtitles.enchancement.entity.generic.stenosis"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "anvil_cost": 1,
+  "description": {
+    "translate": "enchantment.enchancementoverruled.abiding"
+  },
+  "max_cost": {
+    "base": 1,
+    "per_level_above_first": 1
+  },
+  "max_level": 1,
+  "min_cost": {
+    "base": 1,
+    "per_level_above_first": 1
+  },
+  "primary_items": "#minecraft:axes",
+  "slots": [],
+  "supported_items": "#minecraft:axes",
+  "weight": 1
+}

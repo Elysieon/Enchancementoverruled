@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "enchancementoverruled",
+  "version": "${version}",
+  "name": "Enchancementoverruled",
+  "description": "My mod might be craveing a description, but tragedy woe that i haven't see said any ideas, so i must covet and not let myself snap by the stem.",
+  "authors": ["The Collective", "Elysieon"],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/enchancementoverruled/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-datagen": [
+      "net.collective.enchancementoverruled.client.EnchancementoverruledDataGenerator"
+    ],
+    "client": [
+      "net.collective.enchancementoverruled.client.EnchancementoverruledClient"
+    ],
+    "main": [
+      "net.collective.enchancementoverruled.Enchancementoverruled"
+    ],
+    "cardinal-components-entity": [
+      "net.collective.enchancementoverruled.common.index.ModEntityComponents"
+    ]
+  },
+  "mixins": [
+    "enchancementoverruled.mixins.json"
+  ],
+  "custom": {
+    "cardinal-components": [
+      "enchancementoverruled:haste"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}

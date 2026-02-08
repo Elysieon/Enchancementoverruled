@@ -1,0 +1,16 @@
+{
+  "values": [
+    {
+      "id": "enchancementoverruled:weaving",
+      "required": false
+    },
+    {
+      "id": "enchancementoverruled:stenosis",
+      "required": false
+    },
+    {
+      "id": "enchancementoverruled:abiding",
+      "required": false
+    }
+  ]
+}

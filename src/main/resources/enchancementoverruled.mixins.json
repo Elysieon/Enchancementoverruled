@@ -1,0 +1,20 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.collective.enchancementoverruled.common.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "enchantment.axes.haste.LivingEntityMixin",
+    "enchantment.axes.stenosis.LivingEntityMixin",
+    "enchantment.chestplate.strafe.PlayerEntityMixin",
+    "enchantment.leggings.slide.SlamComponentMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}
