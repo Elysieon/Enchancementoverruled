@@ -57,7 +57,7 @@ public abstract class LivingEntityMixin extends Entity {
                     var stenosisRegistry = serverWorld.getRegistryManager().getEntryOrThrow(OverruledEnchantments.STENOSIS.registryKey());
                     int level = EnchantmentHelper.getLevel(stenosisRegistry, Objects.requireNonNull(living.getActiveOrMainHandStack()));
                     if (level > 0 && Math.abs(MathHelper.subtractAngles(this.getHeadYaw(), source.getSource().getHeadYaw())) <= 75.0F) {
-                        this.getEntityWorld().playSound(null, this.getBlockPos(), ModSoundEvent.ENTITY_GENERIC_STENOSIS, this.getSoundCategory(), 0.2F + (amount / 35),MathHelper.nextFloat(serverWorld.getRandom(), .9F,1.15F));
+                        this.getEntityWorld().playSound(null, this.getBlockPos(), ModSoundEvent.ENTITY_GENERIC_STENOSIS, this.getSoundCategory(), 0.35F + (amount / 35),MathHelper.nextFloat(serverWorld.getRandom(), .9F,1.15F));
                         damage = damage * 1.5F;
                         cir.setReturnValue(damage);
                     }
