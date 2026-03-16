@@ -14,7 +14,7 @@ base {
 fabricApi {
     configureDataGeneration {
         client = true
-        modId = "enchancementoverruled"
+        modId = "enchanced"
     }
 }
 repositories {

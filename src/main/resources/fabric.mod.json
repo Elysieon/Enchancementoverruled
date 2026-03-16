@@ -1,34 +1,34 @@
 {
   "schemaVersion": 1,
-  "id": "enchancementoverruled",
+  "id": "enchanced",
   "version": "${version}",
-  "name": "Enchancementoverruled",
-  "description": "My mod might be craveing a description, but tragedy woe that i haven't see said any ideas, so i must covet and not let myself snap by the stem.",
+  "name": "Enchanced",
+  "description": "",
   "authors": ["The Collective", "Elysieon"],
   "contact": {},
   "license": "All-Rights-Reserved",
-  "icon": "assets/enchancementoverruled/icon.png",
+  "icon": "assets/enchanced/icon.png",
   "environment": "*",
   "entrypoints": {
     "fabric-datagen": [
-      "net.collective.enchancementoverruled.client.EnchancementoverruledDataGenerator"
+      "net.collective.enchanced.client.EnchancedDataGenerator"
     ],
     "client": [
-      "net.collective.enchancementoverruled.client.EnchancementoverruledClient"
+      "net.collective.enchanced.client.EnchancedClient"
     ],
     "main": [
-      "net.collective.enchancementoverruled.Enchancementoverruled"
+      "net.collective.enchanced.Enchanced"
     ],
     "cardinal-components-entity": [
-      "net.collective.enchancementoverruled.common.index.ModEntityComponents"
+      "net.collective.enchanced.common.index.ModEntityComponents"
     ]
   },
   "mixins": [
-    "enchancementoverruled.mixins.json"
+    "enchanced.mixins.json"
   ],
   "custom": {
     "cardinal-components": [
-      "enchancementoverruled:haste"
+      "enchanced:haste"
     ]
   },
   "depends": {
