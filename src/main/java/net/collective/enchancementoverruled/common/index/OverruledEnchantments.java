@@ -6,8 +6,7 @@ import net.collectively.geode.registration.GeodeEnchantment;
 public interface OverruledEnchantments {
     GeodeEnchantment WEAVING = Enchancementoverruled.geode.registerEnchantment("weaving");
     GeodeEnchantment STENOSIS = Enchancementoverruled.geode.registerEnchantment("stenosis");
-    GeodeEnchantment ABIDING = Enchancementoverruled.geode.registerEnchantment("abiding");
+    GeodeEnchantment SCURRY = Enchancementoverruled.geode.registerEnchantment("scurry");
     static void init() {
     }
-
 }

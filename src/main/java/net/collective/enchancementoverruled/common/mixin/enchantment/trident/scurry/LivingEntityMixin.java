@@ -1,7 +1,6 @@
-package net.collective.enchancementoverruled.common.mixin.enchantment.axes.haste;
+package net.collective.enchancementoverruled.common.mixin.enchantment.trident.scurry;
 
 import net.collective.enchancementoverruled.common.index.ModEntityComponents;
-import net.collective.enchancementoverruled.common.index.ModSoundEvent;
 import net.collective.enchancementoverruled.common.index.OverruledEnchantments;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -12,8 +11,6 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -46,7 +43,7 @@ public abstract class LivingEntityMixin extends Entity {
             if (living.getEntityWorld() instanceof ServerWorld serverWorld) {
                 if (living.getAttributes().getValue(EntityAttributes.ENTITY_INTERACTION_RANGE) >= living.distanceTo(this)) {
 
-                    var hasteRegistry = serverWorld.getRegistryManager().getEntryOrThrow(OverruledEnchantments.ABIDING.registryKey());
+                    var hasteRegistry = serverWorld.getRegistryManager().getEntryOrThrow(OverruledEnchantments.SCURRY.registryKey());
                     int level = EnchantmentHelper.getLevel(hasteRegistry, Objects.requireNonNull(living.getActiveOrMainHandStack()));
                     if (level > 0) {
                         var component = living.getComponent(ModEntityComponents.HASTE);

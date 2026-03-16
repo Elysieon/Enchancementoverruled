@@ -4,12 +4,13 @@
   "package": "net.collective.enchancementoverruled.common.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "enchantment.axes.haste.LivingEntityMixin",
     "enchantment.axes.stenosis.LivingEntityMixin",
     "enchantment.chestplate.strafe.PlayerEntityMixin",
-    "enchantment.leggings.slide.SlamComponentMixin"
+    "enchantment.leggings.slide.SlamComponentMixin",
+    "enchantment.trident.scurry.LivingEntityMixin"
   ],
   "client": [
+    "enchantment.spear.lunge.MinecraftClientMixin"
   ],
   "injectors": {
     "defaultRequire": 1

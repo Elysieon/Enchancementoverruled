@@ -63,11 +63,11 @@ public class EnchancementoverruledDataGenerator implements DataGeneratorEntrypoi
                     .enchantment(ItemTags.AXES)
                     .primaryItems(ItemTags.AXES)
                     .build();
-            addEnchantment(OverruledEnchantments.ABIDING)
-                    .translateDescription("Repeated strikes increases your attack speed.")
+            addEnchantment(OverruledEnchantments.SCURRY)
+                    .translateDescription("Repeated strikes increases your attack, throw and charge speed.")
                     .autoTranslate()
-                    .enchantment(ItemTags.AXES)
-                    .primaryItems(ItemTags.AXES)
+                    .enchantment(ItemTags.TRIDENT_ENCHANTABLE)
+                    .primaryItems(ItemTags.TRIDENT_ENCHANTABLE)
                     .build();
         }
 

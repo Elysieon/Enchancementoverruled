@@ -6,9 +6,14 @@ import moriyashiine.enchancement.common.init.ModEnchantments;
 import net.collective.enchancementoverruled.common.index.ModLootConditionTypes;
 import net.collective.enchancementoverruled.common.index.ModSoundEvent;
 import net.collective.enchancementoverruled.common.index.OverruledEnchantments;
+import net.collective.enchancementoverruled.common.payload.LungeC2SPayload;
 import net.collectively.geode.Geode;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.registry.tag.ItemTags;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class Enchancementoverruled implements ModInitializer {
@@ -32,5 +37,14 @@ public class Enchancementoverruled implements ModInitializer {
         if (!ModConfig.disallowedEnchantments.contains(Enchantments.FIRE_ASPECT.getValue().toString())) ModConfig.disallowedEnchantments.add(Enchantments.FIRE_ASPECT.getValue().toString());
         if (!ModConfig.disallowedEnchantments.contains(ModEnchantments.STICKY.getValue().toString())) ModConfig.disallowedEnchantments.add(ModEnchantments.STICKY.getValue().toString());
 
+        // Register Packet Stuff
+        PayloadTypeRegistry.playC2S().register(LungeC2SPayload.ID, LungeC2SPayload.CODEC);
+
+        ServerPlayNetworking.registerGlobalReceiver(LungeC2SPayload.ID, (payload, context) -> {
+            context.player().sendMessage(Text.literal("Lunged UwU"), false);
+            var item = context.player().getActiveOrMainHandStack();
+            if (item.isIn(ItemTags.SPEARS)) {
+            }
+        });
     }
 }

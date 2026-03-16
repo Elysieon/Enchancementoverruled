@@ -64,7 +64,7 @@ public class HasteComponent extends SyncedLivingEntityComponent {
     @Override
     public void tick() {
         if (hasteTime > 0) {
-            var hasteRegistry = this.world().getRegistryManager().getEntryOrThrow(OverruledEnchantments.ABIDING.registryKey());
+            var hasteRegistry = this.world().getRegistryManager().getEntryOrThrow(OverruledEnchantments.SCURRY.registryKey());
             int level = EnchantmentHelper.getLevel(hasteRegistry, Objects.requireNonNull(this.livingEntity().getActiveOrMainHandStack()));
             if (level == 0) {
                 clearHaste();

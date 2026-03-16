@@ -1,6 +1,6 @@
 // 1.21.11	-999999999-01-01T00:00:00	Enchancementoverruled/GeodeDataGen
-b072041c26451341b7ac1d0800f870bd36de5888 assets/enchancementoverruled/lang/en_us.json
-9858bbe281151cb88475b0a5179ca51d2a88ca61 data/enchancementoverruled/enchantment/abiding.json
+d96b1b95ca9f0847b2ab3417a0a66e60cd0bb56c assets/enchancementoverruled/lang/en_us.json
+dd61a6c502976143b1ac00e79e2dee06d115c8f8 data/enchancementoverruled/enchantment/scurry.json
 24ad97421340670bb5a82c1ee1f5de32f8bd154b data/enchancementoverruled/enchantment/stenosis.json
 b755303c57e2e49d07a5a075ab678db7243b2539 data/enchancementoverruled/enchantment/weaving.json
-78f824eae40535e17d1c5887fd7cb4e48205a54e data/minecraft/tags/enchantment/non_treasure.json
+28473f3c55d78ffe335bfdd21412952d34000211 data/minecraft/tags/enchantment/non_treasure.json
