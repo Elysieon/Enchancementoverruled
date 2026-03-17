@@ -4,6 +4,7 @@ import moriyashiine.enchancement.common.Enchancement;
 import moriyashiine.enchancement.common.ModConfig;
 import moriyashiine.enchancement.common.init.ModEnchantments;
 import moriyashiine.strawberrylib.api.module.SLibUtils;
+import net.collective.enchanced.common.index.ModEntityComponents;
 import net.collective.enchanced.common.index.ModLootConditionTypes;
 import net.collective.enchanced.common.index.ModSoundEvent;
 import net.collective.enchanced.common.index.EnchancedEnchantments;
@@ -48,10 +49,11 @@ public class Enchanced implements ModInitializer {
         PayloadTypeRegistry.playC2S().register(LungeC2SPayload.ID, LungeC2SPayload.CODEC);
 
         ServerPlayNetworking.registerGlobalReceiver(LungeC2SPayload.ID, (payload, context) -> {
-            context.player().sendMessage(Text.literal("Lunged UwU"), false);
             var item = context.player().getActiveOrMainHandStack();
             if (item.isIn(ItemTags.SPEARS)) {
-                // Lunge Code Stuff
+                var component = context.player().getComponent(ModEntityComponents.LUNGE);
+                component.activateLunge(context.player().getMainHandStack());
+
                 SLibUtils.playSound(context.player(), SoundEvents.ITEM_SPEAR_LUNGE_1.value(), 1F, (MathHelper.nextFloat(context.player().getRandom(), 0.98F, 1.1f)));
             }
         });

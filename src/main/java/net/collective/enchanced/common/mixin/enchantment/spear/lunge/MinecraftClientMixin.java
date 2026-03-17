@@ -1,5 +1,6 @@
 package net.collective.enchanced.common.mixin.enchantment.spear.lunge;
 
+import net.collective.enchanced.common.index.ModEntityComponents;
 import net.collective.enchanced.common.payload.LungeC2SPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
@@ -30,8 +31,11 @@ public class MinecraftClientMixin {
         if (player != null) {
             var enchantmentRegistry = player.getRegistryManager().getEntryOrThrow(Enchantments.LUNGE);
             int level = EnchantmentHelper.getLevel(enchantmentRegistry, Objects.requireNonNull(player.getActiveOrMainHandStack()));
-            if (level > 0 && player.isUsingItem()) {
+            if (level > 0 && player.isUsingItem() && !player.getItemCooldownManager().isCoolingDown(player.getActiveOrMainHandStack())) {
                 while (this.options.attackKey.wasPressed()) {
+                    var Lungecomponent = player.getComponent(ModEntityComponents.LUNGE);
+                    Lungecomponent.activateLunge(player.getActiveOrMainHandStack());
+
                     LungeC2SPayload payload = new LungeC2SPayload(player.getId());
                     ClientPlayNetworking.send(payload);
                 }

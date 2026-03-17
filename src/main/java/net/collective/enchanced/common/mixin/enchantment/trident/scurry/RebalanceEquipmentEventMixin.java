@@ -43,7 +43,6 @@ public class RebalanceEquipmentEventMixin {
                 var scurryChargeTime = math.round(EnchancementUtil.getTridentChargeTime() - component.getTridentChargeUp() + 10);
                 if (scurryChargeTime < 0) scurryChargeTime = 0;
 
-                player.sendMessage(Text.literal("🏹 Charge Time: " + scurryChargeTime).formatted(Formatting.YELLOW), false);
                 // TODO: Remove Debugging code, AFTER you've added a way to tell a different way.
 
                 if (player.getItemUseTime() == scurryChargeTime && isValid(player)) {

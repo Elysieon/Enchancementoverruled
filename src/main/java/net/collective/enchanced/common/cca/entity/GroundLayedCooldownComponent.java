@@ -1,4 +1,4 @@
-package net.collective.enchanced.common.cca;
+package net.collective.enchanced.common.cca.entity;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

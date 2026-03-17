@@ -1,8 +1,8 @@
-package net.collective.enchanced.common.cca;
+package net.collective.enchanced.common.cca.entity;
 
 import com.google.common.collect.ImmutableMultimap;
-import moriyashiine.enchancement.common.util.EnchancementUtil;
 import net.collective.enchanced.Enchanced;
+import net.collective.enchanced.common.cca.SyncedLivingEntityComponent;
 import net.collective.enchanced.common.index.ModEntityComponents;
 import net.collective.enchanced.common.index.EnchancedEnchantments;
 import net.collectively.geode.math.math;
