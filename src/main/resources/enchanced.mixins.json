@@ -11,10 +11,12 @@
     "enchantment.trident.scurry.RebalanceEquipmentEventMixin",
     "enchantment.trident.scurry.TridentItemMixin",
     "rebalanced.mace.ItemStackMixin",
+    "rebalanced.mace.LightningDashComponentMixin",
     "rebalanced.mace.MaceItemMixin"
   ],
   "client": [
-    "enchantment.spear.lunge.MinecraftClientMixin"
+    "enchantment.spear.lunge.MinecraftClientMixin",
+    "rebalanced.mace.client.MinecraftClientMixin"
   ],
   "injectors": {
     "defaultRequire": 1

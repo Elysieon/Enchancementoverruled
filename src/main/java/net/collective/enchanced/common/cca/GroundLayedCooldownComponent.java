@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import moriyashiine.enchancement.common.init.ModEntityComponents;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.storage.ReadView;
@@ -14,7 +13,6 @@ import net.minecraft.storage.WriteView;
 import org.ladysnake.cca.api.v3.component.tick.CommonTickingComponent;
 
 public class GroundLayedCooldownComponent implements CommonTickingComponent {
-    private static final int MAX_WAIT_TICKS = 5;
     private final PlayerEntity obj;
     private final List<GroundLayedCooldown> cooldowns = new ArrayList();
     private int airTicks = 0;
