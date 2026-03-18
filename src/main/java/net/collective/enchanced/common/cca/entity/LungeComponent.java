@@ -80,14 +80,15 @@ public class LungeComponent implements CommonTickingComponent {
             return;
         }
 
-        Box boundingBox = player.getBoundingBox();
-        Vec3d eyePos = player.getEyePos();
-        Vec3d headRotation = player.getHeadRotationVector();
-        Vec3d movement = player.getMovement();
-        Vec3d maxReach = eyePos.add(headRotation.multiply(4.5f + math.max(0, movement.dotProduct(headRotation))));
-        Vec3d minReach = eyePos.add(headRotation.multiply(2));
-        boundingBox = boundingBox.stretch(maxReach.subtract(minReach));
-        GizmoDrawing.box(boundingBox, DrawStyle.stroked(0xffff55ff));
+        // DEBUGGING: Do not remove! It will be necessary in case we find bugs or issues and need to visualize the hitbox.
+        // Box boundingBox = player.getBoundingBox();
+        // Vec3d eyePos = player.getEyePos();
+        // Vec3d headRotation = player.getHeadRotationVector();
+        // Vec3d movement = player.getMovement();
+        // Vec3d maxReach = eyePos.add(headRotation.multiply(4.5f + math.max(0, movement.dotProduct(headRotation))));
+        // Vec3d minReach = eyePos.add(headRotation.multiply(2));
+        // boundingBox = boundingBox.stretch(maxReach.subtract(minReach));
+        // GizmoDrawing.box(boundingBox, DrawStyle.stroked(0xffff55ff));
 
         Either<BlockHitResult, Collection<EntityHitResult>> collisionResult = ProjectileUtil.collectPiercingCollisions(
                 player,
