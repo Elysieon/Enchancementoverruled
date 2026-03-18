@@ -22,6 +22,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.storage.ReadView;
 import net.minecraft.storage.WriteView;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Box;
@@ -120,17 +121,25 @@ public class LungeComponent implements CommonTickingComponent {
                     }
 
                     boolean isInCooldown = player.isInPiercingCooldown(entity, 10);
-                    GizmoDrawing.box(collision.getEntity().getBoundingBox(), DrawStyle.stroked(isInCooldown ? 0xffff5555 : 0xff55ff55));
+                    // DEBUGGING: Do not remove! It will be necessary in case we find bugs or issues and need to visualize the hitbox.
+                    // GizmoDrawing.box(collision.getEntity().getBoundingBox(), DrawStyle.stroked(isInCooldown ? 0xffff5555 : 0xff55ff55));
 
                     if (!isInCooldown) {
-                        player.startPiercingCooldown(entity);
                         double piercedSpeedRelation = rotation.dotProduct(KineticWeaponComponent.getAmplifiedMovement(entity));
                         double relativeSpeed = Math.max(0.0, playerSpeedRelation - piercedSpeedRelation);
                         float effectiveDamage = (float) attackDamage + MathHelper.floor(relativeSpeed * kineticWeaponComponent.damageMultiplier());
                         effectiveDamage *= 0.41f;
 
-                        hasPierced |= player.pierce(player.getActiveHand().getEquipmentSlot(), entity, effectiveDamage, true, true, true);
+                        boolean hasPiercedThisEntity = player.pierce(player.getActiveHand().getEquipmentSlot(), entity, effectiveDamage, true, true, true);
+
+                        if (hasPiercedThisEntity) {
+                            player.startPiercingCooldown(entity);
+                        }
+
+                        hasPierced |= hasPiercedThisEntity;
                     }
+
+                    sync();
                 }
             }
         }
@@ -162,7 +171,7 @@ public class LungeComponent implements CommonTickingComponent {
                 }
 
                 this.player.setVelocity(this.dashDirection.multiply(this.getDashProgress()));
-                attack();
+                if (!getWorld().isClient()) attack();
             }
         }
         this.sync();
