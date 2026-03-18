@@ -14,6 +14,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -49,12 +50,13 @@ public class Enchanced implements ModInitializer {
         PayloadTypeRegistry.playC2S().register(LungeC2SPayload.ID, LungeC2SPayload.CODEC);
 
         ServerPlayNetworking.registerGlobalReceiver(LungeC2SPayload.ID, (payload, context) -> {
-            var item = context.player().getActiveOrMainHandStack();
-            if (item.isIn(ItemTags.SPEARS)) {
-                var component = context.player().getComponent(ModEntityComponents.LUNGE);
-                component.activateLunge(context.player().getMainHandStack());
+            PlayerEntity player = context.player();
+            var itemstack = player.getActiveOrMainHandStack();
+            if (itemstack.isIn(ItemTags.SPEARS)) {
+                var component = player.getComponent(ModEntityComponents.LUNGE);
+                component.activateLunge(player.getActiveOrMainHandStack());
 
-                SLibUtils.playSound(context.player(), SoundEvents.ITEM_SPEAR_LUNGE_1.value(), 2F, (MathHelper.nextFloat(context.player().getRandom(), 0.89F, 1f)));
+                SLibUtils.playSound(player, SoundEvents.ITEM_SPEAR_LUNGE_1.value(), 2F, MathHelper.nextFloat(player.getRandom(), 0.89F, 1f));
             }
         });
     }

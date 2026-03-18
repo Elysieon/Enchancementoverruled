@@ -34,7 +34,7 @@ public class LungeComponent implements CommonTickingComponent {
 
     private static final String DASH_DIRECTION = "dashDirection";
     private Vec3d dashDirection = Vec3d.ZERO;
-    
+
     private ItemStack heldStack = ItemStack.EMPTY;
 
     private final PlayerEntity player;
@@ -46,6 +46,7 @@ public class LungeComponent implements CommonTickingComponent {
     protected ComponentKey<? extends LungeComponent> getComponentKey() {
         return ModEntityComponents.LUNGE;
     }
+
     public void sync() {
         getComponentKey().sync(this.player);
     }
@@ -57,10 +58,11 @@ public class LungeComponent implements CommonTickingComponent {
     @Override
     public void tick() {
         if (this.isDashing() || this.isRecovering()) {
-            if (this.dashingTicks == -4) {
-                //TODO: Figure out how to stop using :c
-//                player.sendMessage(Text.literal("" + this.player.getEntityWorld().isClient()), false);
-//                this.player.stopUsingItem();
+            if (this.dashingTicks <= -4) {
+                this.player.stopUsingItem();
+                this.dashingTicks = -5;
+                sync();
+                return;
             }
 
             this.dashingTicks--;
@@ -78,18 +80,16 @@ public class LungeComponent implements CommonTickingComponent {
     }
 
     public void activateLunge(ItemStack stack) {
-        if (stack.isIn(ItemTags.SPEARS)) {
-            this.player.getItemCooldownManager().set(stack, 285);
+        this.player.getItemCooldownManager().set(stack, 285);
 
-            this.dashingTicks = DASHING_TICKS_MAX;
+        this.dashingTicks = DASHING_TICKS_MAX;
 
-            Vec3d dir = this.player.getRotationVector(Math.clamp(this.player.getPitch(), -9F, 9F), this.player.getYaw());
-            this.dashDirection = dir.normalize().multiply(2);
-            this.player.setVelocity(this.dashDirection);
+        Vec3d dir = this.player.getRotationVector(Math.clamp(this.player.getPitch(), -9F, 9F), this.player.getYaw());
+        this.dashDirection = dir.normalize().multiply(2);
+        this.player.setVelocity(this.dashDirection);
 
-            this.heldStack = stack;
-            this.sync();
-        }
+        this.heldStack = stack;
+        this.sync();
     }
 
     public float getDashProgress() {
@@ -107,6 +107,7 @@ public class LungeComponent implements CommonTickingComponent {
     public float getRecoveryProgress(float tickProgress) {
         return 1F - (Math.clamp(this.dashingTicks - tickProgress, -5F, 0F) / -5F);
     }
+
     public boolean isDashing() {
         return this.dashingTicks > 0;
     }
