@@ -107,7 +107,7 @@ public class WeavingComponent extends SynedPlayerEntityComponent {
 
         if (player() instanceof ClientPlayerEntity clientPlayer) {
             double horizontalInputStrength = clientPlayer.input.getMovementInput().x * 1.5;
-            playerRotation = playerRotation.add(playerRotation.cross(double3.up).mul(horizontalInputStrength));
+            playerRotation = playerRotation.add(playerRotation.cross(double3.down).mul(horizontalInputStrength));
         }
 
         playerRotation = playerRotation.normalize();
