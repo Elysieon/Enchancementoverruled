@@ -5,11 +5,13 @@ import moriyashiine.enchancement.common.ModConfig;
 import moriyashiine.enchancement.common.component.entity.SlamComponent;
 import moriyashiine.enchancement.common.init.ModEnchantments;
 import moriyashiine.strawberrylib.api.module.SLibUtils;
+import net.collective.enchanced.common.cca.entity.WeavingComponent;
 import net.collective.enchanced.common.index.ModEntityComponents;
 import net.collective.enchanced.common.index.ModLootConditionTypes;
 import net.collective.enchanced.common.index.ModSoundEvent;
 import net.collective.enchanced.common.index.EnchancedEnchantments;
 import net.collective.enchanced.common.payload.LungeC2SPayload;
+import net.collective.enchanced.common.payload.WeavingC2SPayload;
 import net.collectively.geode.Geode;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
@@ -53,6 +55,13 @@ public class Enchanced implements ModInitializer {
 
         // Register Packet Stuff
         PayloadTypeRegistry.playC2S().register(LungeC2SPayload.ID, LungeC2SPayload.CODEC);
+        PayloadTypeRegistry.playC2S().register(WeavingC2SPayload.ID, WeavingC2SPayload.CODEC);
+
+        ServerPlayNetworking.registerGlobalReceiver(WeavingC2SPayload.ID, (payload, ctx) -> {
+            PlayerEntity player = ctx.player();
+            WeavingComponent component = player.getComponent(ModEntityComponents.WEAVING);
+            component.onJump();
+        });
 
         ServerPlayNetworking.registerGlobalReceiver(LungeC2SPayload.ID, (payload, context) -> {
             PlayerEntity player = context.player();

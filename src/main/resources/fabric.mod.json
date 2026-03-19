@@ -31,7 +31,8 @@
       "enchanced:scurry",
       "enchanced:groundlayedcooldown",
       "enchanced:lunge",
-      "enchanced:joust"
+      "enchanced:joust",
+      "enchanced:weaving"
     ]
   },
   "accessWidener": "enchanced.classtweaker",
