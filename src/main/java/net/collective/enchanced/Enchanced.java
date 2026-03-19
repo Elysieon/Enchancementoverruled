@@ -31,6 +31,13 @@ public class Enchanced implements ModInitializer {
         return Identifier.of(MOD_ID, identifier);
     }
 
+    public static final Identifier[] DISABLED_ENCHANTMENTS = new Identifier[] {
+            Identifier.ofVanilla("fire_aspect"),
+            Identifier.of("enchancement", "sticky"),
+            Identifier.of("enchancement", "meteor"),
+            Identifier.of("enchancement", "delay"),
+    };
+
     @Override
     public void onInitialize() {
         Enchancement.LOGGER.info("Loading Enchancement");
@@ -39,12 +46,6 @@ public class Enchanced implements ModInitializer {
         EnchancedEnchantments.init();
         ModSoundEvent.init();
         ModLootConditionTypes.init();
-
-        // Remove Enchantments!
-        if (!ModConfig.disallowedEnchantments.contains(Enchantments.FIRE_ASPECT.getValue().toString())) ModConfig.disallowedEnchantments.add(Enchantments.FIRE_ASPECT.getValue().toString());
-        if (!ModConfig.disallowedEnchantments.contains(ModEnchantments.STICKY.getValue().toString())) ModConfig.disallowedEnchantments.add(ModEnchantments.STICKY.getValue().toString());
-        if (!ModConfig.disallowedEnchantments.contains(ModEnchantments.METEOR.getValue().toString())) ModConfig.disallowedEnchantments.add(ModEnchantments.METEOR.getValue().toString());
-        if (!ModConfig.disallowedEnchantments.contains(ModEnchantments.DELAY.getValue().toString())) ModConfig.disallowedEnchantments.add(ModEnchantments.DELAY.getValue().toString());
 
         // Register Packet Stuff
         PayloadTypeRegistry.playC2S().register(LungeC2SPayload.ID, LungeC2SPayload.CODEC);
