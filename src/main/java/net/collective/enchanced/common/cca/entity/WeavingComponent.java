@@ -1,5 +1,8 @@
 package net.collective.enchanced.common.cca.entity;
 
+import moriyashiine.enchancement.common.enchantment.effect.AirJumpEffect;
+import moriyashiine.enchancement.common.enchantment.effect.DirectionBurstEffect;
+import moriyashiine.enchancement.common.enchantment.effect.RotationBurstEffect;
 import net.collective.enchanced.common.cca.SynedPlayerEntityComponent;
 import net.collective.enchanced.common.index.EnchancedEnchantments;
 import net.collective.enchanced.common.index.ModEntityComponents;
@@ -15,12 +18,18 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.storage.ReadView;
 import net.minecraft.storage.WriteView;
+import net.minecraft.text.Text;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.function.IntSupplier;
 
 public class WeavingComponent extends SynedPlayerEntityComponent {
     private static final String GROUND_TIME_KEY = "ground_time";
@@ -37,11 +46,14 @@ public class WeavingComponent extends SynedPlayerEntityComponent {
     private int count = 2;
 
     private static final String REGENERATION_TICKS_KEY = "regeneration_ticks";
-    private static final int MAX_REGENERATION_TICKS = 20;
+    private static final int MAX_REGENERATION_TICKS = 15;
     private int regenerationTicks;
 
     private static final String SHOULD_REFRESH_KEY = "should_refresh";
     private boolean shouldRefresh;
+
+    private boolean wasJumping;
+    private boolean isJumping;
 
     public WeavingComponent(PlayerEntity playerEntity) {
         super(playerEntity);
@@ -76,7 +88,7 @@ public class WeavingComponent extends SynedPlayerEntityComponent {
     }
 
     private void tickRefreshJumps() {
-        if (groundTime > 1) {
+        if (groundTime > 0) {
             shouldRefresh = true;
         }
     }
@@ -98,7 +110,12 @@ public class WeavingComponent extends SynedPlayerEntityComponent {
     }
 
     private boolean canDetectWallJump() {
-        return !player().isSpectator() && hasWeaving() && count > 0 && delay <= 0 && airTime > 4;
+        return !player().isSpectator() && (!player().getAbilities().flying) && hasWeaving() && count > 0 && delay <= 0 && airTime > 4;
+    }
+
+    private void tickJumping() {
+        wasJumping = isJumping;
+        isJumping = player().isJumping();
     }
 
     private void tickWallJumpDetection() {
@@ -154,7 +171,7 @@ public class WeavingComponent extends SynedPlayerEntityComponent {
             }
         }
 
-        if (canWallJump && player().isJumping()) {
+        if (canWallJump) {
             wallJumpDirection = wallJumpDirection.normalize().mul(wallJumpStrength);
             player().setVelocity(wallJumpDirection.toVec3d());
 
@@ -165,20 +182,66 @@ public class WeavingComponent extends SynedPlayerEntityComponent {
 
     @Override
     public void tick() {
+        tickJumping();
         tickTimers();
         tickRefreshJumps();
         regenerateJumps();
 
-        if (canDetectWallJump()) {
+        if (canDetectWallJump() && (isJumping && !wasJumping)) {
             tickWallJumpDetection();
         }
 
         sync();
     }
 
+
+    private <T> void allowRefresh(T component, IntSupplier cooldownSupplier) throws NoSuchFieldException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        int maxCooldown = cooldownSupplier.getAsInt();
+
+        Field cooldownField = component.getClass().getDeclaredField("cooldown");
+        cooldownField.setAccessible(true);
+        int cooldown = cooldownField.getInt(component);
+
+        // Do not refresh if already available.
+        if(cooldown <= 0) {
+            return;
+        }
+
+        Field shouldRefreshField = component.getClass().getDeclaredField("shouldRefresh");
+        shouldRefreshField.setAccessible(true);
+        shouldRefreshField.set(component, true);
+
+        Method setCooldownMethod = component.getClass().getDeclaredMethod("setCooldown", int.class);
+        setCooldownMethod.setAccessible(true);
+        setCooldownMethod.invoke(component, maxCooldown);
+
+        Method syncMethod = component.getClass().getDeclaredMethod("sync");
+        syncMethod.invoke(component);
+    }
+
     public void onJump() {
-        player().setOnGround(true);
         player().fallDistance = 0;
+        // player().setOnGround(true);
+
+        try {
+            allowRefresh(
+                    player().getComponent(moriyashiine.enchancement.common.init.ModEntityComponents.ROTATION_BURST),
+                    () -> RotationBurstEffect.getCooldown(player())
+            );
+
+            allowRefresh(
+                    player().getComponent(moriyashiine.enchancement.common.init.ModEntityComponents.DIRECTION_BURST),
+                    () -> DirectionBurstEffect.getCooldown(player())
+            );
+
+            allowRefresh(
+                    player().getComponent(moriyashiine.enchancement.common.init.ModEntityComponents.AIR_JUMP),
+                    () -> AirJumpEffect.getChargeCooldown(player())
+            );
+        } catch (Exception exception) {
+            //noinspection CallToPrintStackTrace
+            exception.printStackTrace();
+        }
 
         shouldRefresh = false;
         delay = 10;

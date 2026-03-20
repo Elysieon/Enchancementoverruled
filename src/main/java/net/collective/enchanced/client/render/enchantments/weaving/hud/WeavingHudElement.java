@@ -43,8 +43,6 @@ public class WeavingHudElement extends PlayerHudElement {
         float rows = count / 2f;
         y -= math.round((rows - 1) * (5));
 
-        context.drawText(MinecraftClient.getInstance().textRenderer, "Rows: " + rows, 0, 0, 0xffffffff, true);
-
         for (int i = 0; i < count; i++) {
             boolean isLeftHandSide = i % 2 == 0;
             boolean isFullyCharged = component.count() < i;
