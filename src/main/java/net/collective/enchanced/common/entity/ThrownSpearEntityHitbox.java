@@ -5,12 +5,10 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.storage.ReadView;
 import net.minecraft.storage.WriteView;
-import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jspecify.annotations.Nullable;
@@ -34,12 +32,20 @@ public class ThrownSpearEntityHitbox extends Entity {
     public void tick() {
         super.tick();
 
-        if(!getEntityWorld().isClient() && (owner == null || owner.isRemoved())) {
-            setRemoved(RemovalReason.DISCARDED);
+        if (getEntityWorld() instanceof ServerWorld) {
+            if (owner == null || owner.isRemoved()) {
+                setRemoved(RemovalReason.DISCARDED);
+                return;
+            }
         }
 
-        List<Entity> list = this.getEntityWorld().getOtherEntities(this, this.getBoundingBox().contract(0.1, 0.1, 0.1), entity -> !(entity instanceof ThrownSpearEntityHitbox) && !(entity instanceof ThrownSpearEntity));
-        for (Entity entity : list) {
+        List<Entity> entities = this.getEntityWorld().getOtherEntities(
+                this,
+                this.getBoundingBox().contract(0.1, 0.1, 0.1),
+                entity -> !(entity instanceof ThrownSpearEntityHitbox) && !(entity instanceof ThrownSpearEntity)
+        );
+
+        for (Entity entity : entities) {
             if (entity instanceof LivingEntity) {
                 entity.slowMovement(Blocks.AIR.getDefaultState(), new Vec3d(0.05, 0.01, 0.05));
             }

@@ -5,9 +5,7 @@ import net.collective.enchanced.api.posing.CustomPoseCondition;
 import net.collective.enchanced.common.index.EnchancedEnchantments;
 import net.collective.enchanced.common.util.EnchantUtils;
 import net.collectively.geode.helpers.RenderHelper;
-import net.collectively.geode.math.math;
 import net.collectively.geode.types.double3;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.command.OrderedRenderCommandQueue;
@@ -15,7 +13,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.consume.UseAction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.MathHelper;
 
 import java.util.Optional;
 

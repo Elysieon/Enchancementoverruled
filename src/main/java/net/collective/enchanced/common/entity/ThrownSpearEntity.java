@@ -1,9 +1,10 @@
 package net.collective.enchanced.common.entity;
 
+import moriyashiine.strawberrylib.api.module.SLibUtils;
+import net.collective.enchanced.common.cca.entity.ImpalingComponent;
+import net.collective.enchanced.common.index.ModEntityComponents;
 import net.collective.enchanced.common.index.ModEntityTypes;
 import net.collective.enchanced.common.payload.ThrownSpearSyncS2CPayload;
-import net.collectively.geode.debug.Draw;
-import net.collectively.geode.types.double3;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -17,13 +18,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.storage.ReadView;
 import net.minecraft.storage.WriteView;
-import net.minecraft.text.Text;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
@@ -32,36 +32,27 @@ import java.util.*;
 
 public class ThrownSpearEntity extends PersistentProjectileEntity {
     private static final String RENDERED_ITEMSTACK_KEY = "rendered_item_stack";
-    private ItemStack renderedItemStack;
+    private ItemStack renderedItemStack = ItemStack.EMPTY;
 
-    private static final String STORED_VELOCITY_KEY = "stored_velocity";
-    private Vec3d storedVelocity = Vec3d.ZERO;
+    private static final String STORED_VELOCITY_DIRECTION_KEY = "stored_velocity_direction";
+    private Vec3d storedVelocityDirection = Vec3d.ZERO;
 
     private final ThrownSpearEntityHitbox[] hitboxes;
-    private final Map<LivingEntity, Vec3d> hitEntities = new LinkedHashMap<>();
+    private final List<LivingEntity> hitEntities = new ArrayList<>();
+    private boolean isReturningToOwner;
 
     public ThrownSpearEntity(EntityType<? extends PersistentProjectileEntity> entityType, World world) {
         super(entityType, world);
-        renderedItemStack = ItemStack.EMPTY;
-        hitboxes = getHitboxes();
-
-        if (world instanceof ServerWorld serverWorld) {
-            for (var box : hitboxes) serverWorld.spawnEntity(box);
-        }
+        hitboxes = getAndInitializeHitboxes();
     }
 
     public ThrownSpearEntity(LivingEntity shooter, World world, ItemStack stack) {
         super(ModEntityTypes.THROWN_SPEAR, shooter, world, stack, stack);
-        renderedItemStack = ItemStack.EMPTY;
-        hitboxes = getHitboxes();
-
-        if (world instanceof ServerWorld serverWorld) {
-            for (var box : hitboxes) serverWorld.spawnEntity(box);
-        }
+        hitboxes = getAndInitializeHitboxes();
     }
 
-    private ThrownSpearEntityHitbox[] getHitboxes() {
-        return new ThrownSpearEntityHitbox[]{
+    private ThrownSpearEntityHitbox[] getAndInitializeHitboxes() {
+        ThrownSpearEntityHitbox[] hitboxes = new ThrownSpearEntityHitbox[]{
                 new ThrownSpearEntityHitbox(this),
                 new ThrownSpearEntityHitbox(this),
                 new ThrownSpearEntityHitbox(this),
@@ -71,9 +62,13 @@ public class ThrownSpearEntity extends PersistentProjectileEntity {
                 new ThrownSpearEntityHitbox(this),
                 new ThrownSpearEntityHitbox(this),
         };
-    }
 
-    public ThrownSpearEntityHitbox[] hitboxes() {
+        if (getEntityWorld() instanceof ServerWorld serverWorld) {
+            for (ThrownSpearEntityHitbox hitbox : hitboxes) {
+                serverWorld.spawnEntity(hitbox);
+            }
+        }
+
         return hitboxes;
     }
 
@@ -81,72 +76,41 @@ public class ThrownSpearEntity extends PersistentProjectileEntity {
         this.renderedItemStack = renderedItemStack.copy();
     }
 
+    @Override
+    protected void initDataTracker(DataTracker.Builder builder) {
+        super.initDataTracker(builder);
+    }
+
+    @Override
+    protected ItemStack getDefaultItemStack() {
+        return Optional.ofNullable(renderedItemStack).orElse(ItemStack.EMPTY);
+    }
+
+    @Override
+    protected void writeCustomData(WriteView view) {
+        super.writeCustomData(view);
+        view.put(RENDERED_ITEMSTACK_KEY, ItemStack.CODEC, renderedItemStack);
+        view.put(STORED_VELOCITY_DIRECTION_KEY, Vec3d.CODEC, storedVelocityDirection);
+    }
+
+    @Override
+    protected void readCustomData(ReadView view) {
+        super.readCustomData(view);
+        renderedItemStack = view.read(RENDERED_ITEMSTACK_KEY, ItemStack.CODEC).orElse(ItemStack.EMPTY);
+        storedVelocityDirection = view.read(STORED_VELOCITY_DIRECTION_KEY, Vec3d.CODEC).orElse(Vec3d.ZERO);
+    }
+
     public ItemStack getRenderedItemStack() {
         return renderedItemStack;
     }
 
     @Override
-    public void tick() {
-        super.tick();
-
-        Vec3d rot = getVelocity().normalize();
-
-        if (rot.length() > 0) {
-            storedVelocity = rot;
-        }
-
-        if (storedVelocity == null) {
-            storedVelocity = Vec3d.ZERO;
-        }
-
-        Vec3d pos = getEntityPos();
-
-        for (int i = 0; i < hitboxes.length; i++) {
-            hitboxes[i].setPosition(pos.subtract(storedVelocity.multiply(i * 0.25)));
-        }
-
-        if (!getEntityWorld().isClient()) {
-            if (getOwner() instanceof ServerPlayerEntity serverPlayerEntity) {
-                ServerPlayNetworking.send(serverPlayerEntity, ThrownSpearSyncS2CPayload.of(this));
-            }
-        }
-
-        if (getVelocity().length() > 0) {
-            for (var keyValuePair : hitEntities.entrySet()) {
-                LivingEntity hitEntity = keyValuePair.getKey();
-                Vec3d wishPos = pos.subtract(0, 1, 0);
-
-                RaycastContext ctx = new RaycastContext(
-                        getEntityPos(),
-                        wishPos.add(storedVelocity.multiply(0.5)),
-                        RaycastContext.ShapeType.COLLIDER,
-                        RaycastContext.FluidHandling.NONE,
-                        this
-                );
-
-                if (getEntityWorld().raycast(ctx) instanceof BlockHitResult result) {
-                    Box box = hitEntity.getBoundingBox();
-                    double averageHorizontalLength = (box.getLengthX() + box.getLengthZ()) / 2d;
-                    wishPos = wishPos.add(result.getSide().getDoubleVector().multiply(averageHorizontalLength));
-                }
-
-                keyValuePair.getKey().setPosition(wishPos);
-            }
-        }
+    protected boolean tryPickup(PlayerEntity player) {
+        return false;
     }
 
     @Override
-    protected void onEntityHit(EntityHitResult entityHitResult) {
-        if (entityHitResult.getEntity() instanceof LivingEntity livingEntity && !hitEntities.containsKey(livingEntity)) {
-            hitEntities.put(livingEntity, livingEntity.getEntityPos().subtract(getEntityPos()));
-
-            if (getEntityWorld() instanceof ServerWorld serverWorld) {
-                if (getOwner() instanceof PlayerEntity player) {
-                    DamageSource source = player.getMainHandStack().getDamageSource(player, () -> serverWorld.getDamageSources().playerAttack(player));
-                    livingEntity.damage(serverWorld, source, 10);
-                }
-            }
-        }
+    protected void age() {
     }
 
     @Override
@@ -165,25 +129,168 @@ public class ThrownSpearEntity extends PersistentProjectileEntity {
             return false;
         }
 
-        Vec3d offset = Vec3d.ZERO;
-        Vec3d extraVelocity = Vec3d.ZERO;
+        returnToOwner();
+        return true;
+    }
 
-        if (getOwner() instanceof PlayerEntity player) {
-            Vec3d dir = player.getEntityPos().subtract(getEntityPos()).normalize();
-            offset = dir.multiply(0.25);
-            extraVelocity = dir.multiply(0.1);
+    public void returnToOwner() {
+        if (isReturningToOwner) {
+            return;
         }
 
-        ItemEntity item = dropStack(world, renderedItemStack, offset);
-        item.addVelocity(extraVelocity);
+        Entity owner = getOwner();
 
-        discard();
-        return true;
+        if (owner == null) {
+            if (getEntityWorld() instanceof ServerWorld serverWorld) {
+                Vec3d dir = storedVelocityDirection.multiply(-1);
+                Vec3d offset = dir.multiply(0.25);
+                Vec3d extraVelocity = dir.multiply(0.1);
+
+                ItemEntity item = dropStack(serverWorld, renderedItemStack, offset);
+                if (item != null) item.addVelocity(extraVelocity);
+            }
+
+            discard();
+            return;
+        }
+
+        isReturningToOwner = true;
+    }
+
+    private boolean isMoving() {
+        Vec3d velocityDirection = getVelocity().normalize();
+        return velocityDirection.length() > 0;
+    }
+
+    private void tickStoredVelocityDirection() {
+        Vec3d velocityDirection = getVelocity().normalize();
+
+        if (isMoving()) {
+            storedVelocityDirection = velocityDirection;
+        }
+
+        if (storedVelocityDirection == null) {
+            storedVelocityDirection = Vec3d.ZERO;
+        }
+    }
+
+    private void tickHitboxPosition() {
+        Vec3d position = getEntityPos();
+        for (int i = 0; i < hitboxes.length; i++) {
+            hitboxes[i].setPosition(position.subtract(storedVelocityDirection.multiply(i * 0.25)));
+        }
+    }
+
+    private void tickDraggingTarget() {
+        if (isMoving()) {
+            Vec3d position = getEntityPos();
+
+            for (LivingEntity livingEntity : hitEntities) {
+                Vec3d wishPos = position.subtract(0, 1, 0);
+
+                RaycastContext ctx = new RaycastContext(
+                        getEntityPos(),
+                        wishPos.add(storedVelocityDirection.multiply(0.5)),
+                        RaycastContext.ShapeType.COLLIDER,
+                        RaycastContext.FluidHandling.NONE,
+                        this
+                );
+
+                if (getEntityWorld().raycast(ctx) instanceof BlockHitResult result) {
+                    Box box = livingEntity.getBoundingBox();
+                    double averageHorizontalLength = (box.getLengthX() + box.getLengthZ()) / 2d;
+                    wishPos = wishPos.add(result.getSide().getDoubleVector().multiply(averageHorizontalLength));
+                }
+
+                livingEntity.setPosition(wishPos);
+            }
+        }
+    }
+
+    private void tickVisualSync() {
+        if (!getEntityWorld().isClient()) {
+            if (getOwner() instanceof ServerPlayerEntity serverPlayerEntity) {
+                ServerPlayNetworking.send(serverPlayerEntity, ThrownSpearSyncS2CPayload.of(this));
+            }
+        }
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (isReturningToOwner) {
+            if (isInGround() || isInsideWall()) {
+                setInGround(false);
+            }
+
+            setNoGravity(true);
+            setNoClip(true);
+
+            if (getOwner() instanceof Entity ownerEntity) {
+                setVelocity(ownerEntity.getEntityPos().subtract(getEntityPos()).normalize());
+
+                if (distanceTo(ownerEntity) < 2) {
+                    if (ownerEntity instanceof PlayerEntity player) {
+                        ImpalingComponent component = player.getComponent(ModEntityComponents.IMPALING);
+                        component.pickup(this);
+                    }
+
+                    discard();
+                    return;
+                }
+            }
+
+            return;
+        }
+
+        tickStoredVelocityDirection();
+        tickHitboxPosition();
+        tickVisualSync();
+        tickDraggingTarget();
+    }
+
+    private Optional<DamageSource> getDamageSource(ServerWorld serverWorld) {
+        if (getOwner() instanceof PlayerEntity player) {
+            final DamageSource fallbackSource = serverWorld.getDamageSources().playerAttack(player);
+            return Optional.of(player.getMainHandStack().getDamageSource(player, () -> fallbackSource));
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
+    protected void onBlockHit(BlockHitResult blockHitResult) {
+        super.onBlockHit(blockHitResult);
+
+        if (getOwner() != null) {
+            SLibUtils.playSound(getOwner(), SoundEvents.ITEM_TRIDENT_HIT_GROUND, 1, 0.825f);
+        }
+    }
+
+    @Override
+    protected void onEntityHit(EntityHitResult entityHitResult) {
+        if (entityHitResult.getEntity() instanceof LivingEntity livingEntity && !hitEntities.contains(livingEntity)) {
+            if (getEntityWorld() instanceof ServerWorld serverWorld) {
+                getDamageSource(serverWorld).ifPresent(source -> {
+                    if (livingEntity.damage(serverWorld, source, 10)) {
+                        hitEntities.add(livingEntity);
+
+                        if (getOwner() != null) {
+                            SLibUtils.playSound(getOwner(), SoundEvents.ITEM_TRIDENT_HIT, 1, 0.825f);
+                        }
+                    }
+                });
+            }
+        }
     }
 
     @Override
     public void onRemoved() {
-        for (var hitbox : hitboxes) hitbox.remove(RemovalReason.DISCARDED);
+        for (ThrownSpearEntityHitbox hitbox : hitboxes) {
+            hitbox.remove(RemovalReason.DISCARDED);
+        }
+
         super.onRemoved();
     }
 
@@ -195,34 +302,5 @@ public class ThrownSpearEntity extends PersistentProjectileEntity {
         for (int i = 0; i < hitboxes.length; i++) {
             hitboxes[i].setId(i + packet.getEntityId() + 1);
         }
-    }
-
-    @Override
-    protected void initDataTracker(DataTracker.Builder builder) {
-        super.initDataTracker(builder);
-    }
-
-    @Override
-    protected ItemStack getDefaultItemStack() {
-        return Optional.ofNullable(renderedItemStack).orElse(ItemStack.EMPTY);
-    }
-
-    @Override
-    protected void writeCustomData(WriteView view) {
-        super.writeCustomData(view);
-        view.put(RENDERED_ITEMSTACK_KEY, ItemStack.CODEC, renderedItemStack);
-        view.put(STORED_VELOCITY_KEY, Vec3d.CODEC, storedVelocity);
-    }
-
-    @Override
-    protected void readCustomData(ReadView view) {
-        super.readCustomData(view);
-        renderedItemStack = view.read(RENDERED_ITEMSTACK_KEY, ItemStack.CODEC).orElse(ItemStack.EMPTY);
-        storedVelocity = view.read(STORED_VELOCITY_KEY, Vec3d.CODEC).orElse(Vec3d.ZERO);
-    }
-
-    @Override
-    protected boolean tryPickup(PlayerEntity player) {
-        return false;
     }
 }
