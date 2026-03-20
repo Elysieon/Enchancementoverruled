@@ -11,11 +11,13 @@
     "enchantment.bow.multishot.BowItemMixin",
     "enchantment.bow.multishot.RangedWeaponItemMixin",
     "enchantment.chestplate.strafe.PlayerEntityMixin",
+    "enchantment.crossbow.ballistic.CrossbowItemMixin",
+    "enchantment.crossbow.ballistic.PlayerEntityMixin",
+    "enchantment.crossbow.ballistic.RangedWeaponItemMixin",
     "enchantment.leggings.slide.SlamComponentMixin",
     "enchantment.spear.impaling.ItemMixin",
     "enchantment.spear.joust.ItemMixin",
     "enchantment.spear.joust.KineticWeaponComponentMixin",
-    "rebalanced.spear.MultiplyMovementSpeedEventMixin",
     "enchantment.spear.lunge.KineticWeaponComponentMixin",
     "enchantment.trident.scurry.LivingEntityMixin",
     "enchantment.trident.scurry.RebalanceEquipmentEventMixin",
@@ -26,7 +28,8 @@
     "rebalanced.disallowed_enchantments.EnchantmentUtilMixin",
     "rebalanced.mace.ItemStackMixin",
     "rebalanced.mace.LightningDashComponentMixin",
-    "rebalanced.mace.MaceItemMixin"
+    "rebalanced.mace.MaceItemMixin",
+    "rebalanced.spear.MultiplyMovementSpeedEventMixin"
   ],
   "client": [
     "enchantment.spear.joust.HeldItemRendererMixin",

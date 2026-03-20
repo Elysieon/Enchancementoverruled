@@ -18,8 +18,8 @@ public interface EnchancedEnchantments {
     GeodeEnchantment OVERCLOCKED = Enchanced.geode.registerEnchantment("overclocked");
     GeodeEnchantment MULTISHOT = Enchanced.geode.registerEnchantment("multishot");
     GeodeEnchantment JOUST = Enchanced.geode.registerEnchantment("joust");
-
     GeodeEnchantment IMPALING = Enchanced.geode.registerEnchantment("impaling");
+    GeodeEnchantment BALLISTIC = Enchanced.geode.registerEnchantment("ballistic");
 
     static void init() {
     }

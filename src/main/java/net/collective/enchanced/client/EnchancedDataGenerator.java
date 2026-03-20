@@ -77,6 +77,12 @@ public class EnchancedDataGenerator implements DataGeneratorEntrypoint {
                     .enchantment(ItemTags.SPEARS)
                     .primaryItems(ItemTags.SPEARS)
                     .build();
+            addEnchantment(EnchancedEnchantments.BALLISTIC)
+                    .translateDescription("Shoots guided firework rockets.")
+                    .autoTranslate()
+                    .enchantment(ItemTags.CROSSBOW_ENCHANTABLE)
+                    .primaryItems(ItemTags.CROSSBOW_ENCHANTABLE)
+                    .build();
         }
 
         @Override

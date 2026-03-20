@@ -33,7 +33,8 @@
       "enchanced:lunge",
       "enchanced:joust",
       "enchanced:weaving",
-      "enchanced:impaling"
+      "enchanced:impaling",
+      "enchanced:ballistic"
     ]
   },
   "accessWidener": "enchanced.classtweaker",
