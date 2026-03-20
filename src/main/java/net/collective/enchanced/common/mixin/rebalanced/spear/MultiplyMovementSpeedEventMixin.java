@@ -1,4 +1,4 @@
-package net.collective.enchanced.common.mixin.enchantment.spear.joust;
+package net.collective.enchanced.common.mixin.rebalanced.spear;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -18,7 +18,7 @@ public interface MultiplyMovementSpeedEventMixin {
                     target = "Lnet/minecraft/entity/LivingEntity;isUsingItem()Z"
             )
     )
-    private static boolean joust$getMovementMultiplier(LivingEntity instance, Operation<Boolean> original) {
+    private static boolean spear$getMovementMultiplier(LivingEntity instance, Operation<Boolean> original) {
         if (instance.isUsingItem() && EnchantUtils.hasEnchantment(instance, instance.getActiveItem(), EnchancedEnchantments.JOUST)) {
             return false;
         }
