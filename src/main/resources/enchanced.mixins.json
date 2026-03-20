@@ -8,6 +8,8 @@
     "anvil.ItemMixin",
     "enchantment.axes.stenosis.LivingEntityMixin",
     "enchantment.boots.weaving.CobwebBlockMixin",
+    "enchantment.bow.multishot.BowItemMixin",
+    "enchantment.bow.multishot.RangedWeaponItemMixin",
     "enchantment.chestplate.strafe.PlayerEntityMixin",
     "enchantment.leggings.slide.SlamComponentMixin",
     "enchantment.spear.joust.ItemMixin",
