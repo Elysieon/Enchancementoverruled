@@ -18,8 +18,8 @@ public class PlayerEntityMixin {
     @Inject(method = {"travel"}, at = {@At("HEAD")})
     private void enchancement$AirVelocityStrafe(Vec3d movementInput, CallbackInfo ci) {
         LivingEntity entity = (LivingEntity) (Object) this;
-        ItemStack boots = entity.getEquippedStack(EquipmentSlot.CHEST);
-        if (!boots.isEmpty()) {
+        ItemStack chestStack = entity.getEquippedStack(EquipmentSlot.CHEST);
+        if (!chestStack.isEmpty()) {
             boolean hasSticky = (EnchancementUtil.hasAnyEnchantmentsWith(entity, ModEnchantmentEffectComponentTypes.DIRECTION_BURST));
             if (hasSticky) {
                 Vec3d velocity = entity.getVelocity();
