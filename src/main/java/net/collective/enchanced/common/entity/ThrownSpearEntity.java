@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.storage.ReadView;
 import net.minecraft.storage.WriteView;
@@ -264,7 +265,7 @@ public class ThrownSpearEntity extends PersistentProjectileEntity {
         super.onBlockHit(blockHitResult);
 
         if (getOwner() != null) {
-            SLibUtils.playSound(getOwner(), SoundEvents.ITEM_TRIDENT_HIT_GROUND, 1, 0.825f);
+            getEntityWorld().playSound(null, getX(), getY(), getZ(), SoundEvents.ITEM_TRIDENT_HIT_GROUND, SoundCategory.PLAYERS, 1f, 0.825f);
         }
     }
 
