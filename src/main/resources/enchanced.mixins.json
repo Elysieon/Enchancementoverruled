@@ -11,7 +11,6 @@
     "enchantment.bow.multishot.BowItemMixin",
     "enchantment.bow.multishot.RangedWeaponItemMixin",
     "enchantment.chestplate.strafe.PlayerEntityMixin",
-    "enchantment.crossbow.ballistic.CrossbowItemMixin",
     "enchantment.crossbow.ballistic.PlayerEntityMixin",
     "enchantment.crossbow.ballistic.RangedWeaponItemMixin",
     "enchantment.leggings.slide.SlamComponentMixin",

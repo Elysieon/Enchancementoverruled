@@ -27,7 +27,7 @@ public abstract class RangedWeaponItemMixin {
             argsOnly = true
     )
     private static ItemStack ballistic$load(ItemStack originalProjectileStack, ItemStack stack, ItemStack projectileStack, LivingEntity shooter) {
-        if (!projectileStack.isOf(Items.FIREWORK_ROCKET) && (!(shooter instanceof PlayerEntity player) || player.isCreative())) {
+        if (shooter != null && !projectileStack.isOf(Items.FIREWORK_ROCKET) && (!(shooter instanceof PlayerEntity player) || player.isCreative())) {
             return BallisticComponent.getRandomFirework(shooter.getRandom());
         }
 

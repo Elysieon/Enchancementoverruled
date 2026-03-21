@@ -17,6 +17,7 @@ public class PlayerEntityMixin {
     @Unique
     private ItemStack ballistic$getRocketsStack() {
         PlayerEntity playerEntity = (PlayerEntity) (Object) this;
+
         for (int i = 0; i < playerEntity.getInventory().size(); i++) {
             ItemStack itemStack = playerEntity.getInventory().getStack(i);
             if (itemStack.isOf(Items.FIREWORK_ROCKET)) {

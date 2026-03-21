@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public class CrossbowItemMixin {
     @ModifyVariable(method = "shoot", at = @At("HEAD"), ordinal = 1, argsOnly = true)
     private float shoot(float divergence, LivingEntity shooter, ProjectileEntity projectile) {
-        if (projectile.getWeaponStack() != null && EnchantUtils.hasEnchantment(shooter, projectile.getWeaponStack(), ModEnchantments.SCATTER)) {
+        if (projectile.getWeaponStack() != null && shooter != null && EnchantUtils.hasEnchantment(shooter, projectile.getWeaponStack(), ModEnchantments.SCATTER)) {
             return Enchanced.getScatterDivergence();
         }
 
