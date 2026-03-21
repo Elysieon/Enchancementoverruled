@@ -5,6 +5,7 @@ import net.collective.enchanced.common.cca.SynedPlayerEntityComponent;
 import net.collective.enchanced.common.entity.ThrownSpearEntity;
 import net.collective.enchanced.common.index.ModEntityComponents;
 import net.collective.enchanced.common.payload.ThrownSpearSyncS2CPayload;
+import net.collectively.geode.math.math;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -12,6 +13,7 @@ import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.storage.ReadView;
 import net.minecraft.storage.WriteView;
@@ -54,12 +56,14 @@ public class ImpalingComponent extends SynedPlayerEntityComponent {
         }
 
         if (world() instanceof ServerWorld serverWorld) {
+            float power = math.clamp(useDuration / 10f, 2, 3);
+
             ThrownSpearEntity entity = ProjectileEntity.spawnWithVelocity(
                     (world, shooter, stack) -> new ThrownSpearEntity(shooter, world, stack),
                     serverWorld,
                     itemStack,
                     player(),
-                    0, 2.5f, 0
+                    0, power, 0
             );
 
             entity.setRenderedItemStack(itemStack);
@@ -69,7 +73,7 @@ public class ImpalingComponent extends SynedPlayerEntityComponent {
             }
         }
 
-        SLibUtils.playSound(player(), SoundEvents.ITEM_TRIDENT_THROW.value(), 1, 0.825f);
+        world().playSound(null, player().getX(), player().getY(), player().getZ(), SoundEvents.ITEM_TRIDENT_THROW.value(), SoundCategory.PLAYERS, 1, math.lerp(math.clamp01((useDuration - 10f) / 30f), 0.825f, 0.9f));
 
         itemStack.decrement(1);
         sync();
