@@ -46,7 +46,7 @@ Todo List:
         - Scrolling name with mask.
         - Lock icon with max X coordinate being within the bounds.
         - Mask around the element to prevent the scrolling name from going out of bounds.
-    - Book Payment
+    - Book Payment ✅
     - Book Reroll
     - Grindstone Buff with books
     - Villager changes perhaps???
