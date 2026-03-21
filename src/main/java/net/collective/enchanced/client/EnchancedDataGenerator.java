@@ -42,7 +42,6 @@ public class EnchancedDataGenerator implements DataGeneratorEntrypoint {
                     .enchantment(ItemTags.FOOT_ARMOR_ENCHANTABLE)
                     .primaryItems(ItemTags.FOOT_ARMOR_ENCHANTABLE)
                     .addSlot(AttributeModifierSlot.FEET)
-                    .addEffect(EnchantmentEffectComponentTypes.ATTRIBUTES, new AttributeEnchantmentEffect(linkedModId("enchantment.weaving"), EntityAttributes.SNEAKING_SPEED, EnchantmentLevelBasedValue.linear(0.65F), EntityAttributeModifier.Operation.ADD_VALUE))
                     .build();
             addEnchantment(EnchancedEnchantments.STENOSIS)
                     .translateDescription("Increased damage when striking an enemy from behind.")

@@ -16,7 +16,7 @@ public class GroundLayedCooldownComponent implements CommonTickingComponent {
     private final PlayerEntity obj;
     private final List<GroundLayedCooldown> cooldowns = new ArrayList();
     private int airTicks = 0;
-    private int waitTicks = 0;
+    private int waitTicks = 5;
 
     public GroundLayedCooldownComponent(PlayerEntity obj) {
         this.obj = obj;
