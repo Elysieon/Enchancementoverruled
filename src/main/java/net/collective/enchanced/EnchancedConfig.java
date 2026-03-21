@@ -3,7 +3,14 @@ package net.collective.enchanced;
 import eu.midnightdust.lib.config.MidnightConfig;
 
 public class EnchancedConfig extends MidnightConfig {
-    public static final String NORMAL = "normal";
+    private static final String CLIENT = "client";
+    private static final String SERVER = "server";
 
-    @Comment(category = NORMAL, name= "Place Holder", centered = true) public static Comment c1;
+    @Entry(
+            category = SERVER,
+            isSlider = true,
+            min = 0.5f,
+            max = 3f
+    )
+    public static float scatterDivergence = 1.4f;
 }

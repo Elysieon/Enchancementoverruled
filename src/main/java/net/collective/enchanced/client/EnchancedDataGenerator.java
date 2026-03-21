@@ -15,6 +15,7 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.ItemTags;
 
+import java.lang.reflect.Field;
 import java.util.concurrent.CompletableFuture;
 
 public class EnchancedDataGenerator implements DataGeneratorEntrypoint {
@@ -25,7 +26,9 @@ public class EnchancedDataGenerator implements DataGeneratorEntrypoint {
         pack.addProvider(Generator::new);
     }
 
+    @SuppressWarnings("CallToPrintStackTrace")
     public static class Generator extends GeodeDataGeneration {
+        private DataGen dataGen;
 
         public Generator(FabricDataOutput dataOutput, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
             super(dataOutput, registriesFuture);
@@ -83,6 +86,28 @@ public class EnchancedDataGenerator implements DataGeneratorEntrypoint {
                     .enchantment(ItemTags.CROSSBOW_ENCHANTABLE)
                     .primaryItems(ItemTags.CROSSBOW_ENCHANTABLE)
                     .build();
+
+            try {
+                Field dataGenField = GeodeDataGeneration.class.getDeclaredField("dataGen");
+                dataGenField.setAccessible(true);
+                this.dataGen = (DataGen) dataGenField.get(this);
+
+                configField("", "Enchanced");
+                configField("category.client", "Client");
+                configField("category.server", "Server");
+                configField("scatterDivergence", "Scatter Spread Multiplier");
+
+            } catch(Exception exception) {
+                exception.printStackTrace();
+            }
+        }
+
+        private void configField(String name, String description) {
+            if (dataGen==null) {
+                return;
+            }
+
+            dataGen.translations.add("enchanced.midnightconfig" + (name.isEmpty() ? ".title" : "." + name), description);
         }
 
         @Override

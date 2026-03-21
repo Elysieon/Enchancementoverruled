@@ -1,5 +1,6 @@
 package net.collective.enchanced;
 
+import eu.midnightdust.lib.config.MidnightConfig;
 import moriyashiine.enchancement.common.Enchancement;
 import moriyashiine.enchancement.common.ModConfig;
 import moriyashiine.enchancement.common.component.entity.SlamComponent;
@@ -84,6 +85,8 @@ public class Enchanced implements ModInitializer {
         });
 
         geode.register();
+
+        MidnightConfig.init("enchanced", EnchancedConfig.class);
     }
 
     public static float getScatterDivergence() {
