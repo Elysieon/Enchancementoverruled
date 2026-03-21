@@ -209,9 +209,9 @@ public class ThrownSpearEntity extends PersistentProjectileEntity {
     }
 
     private void tickVisualSync() {
-        if (!getEntityWorld().isClient()) {
-            if (getOwner() instanceof ServerPlayerEntity serverPlayerEntity) {
-                ServerPlayNetworking.send(serverPlayerEntity, ThrownSpearSyncS2CPayload.of(this));
+        if (getOwner() instanceof ServerPlayerEntity serverPlayerEntity) {
+            for (ServerPlayerEntity serverPlayer : serverPlayerEntity.getEntityWorld().getPlayers()) {
+                ServerPlayNetworking.send(serverPlayer, ThrownSpearSyncS2CPayload.of(this));
             }
         }
     }
