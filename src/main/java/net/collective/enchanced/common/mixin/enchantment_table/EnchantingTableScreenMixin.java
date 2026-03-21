@@ -2,11 +2,13 @@ package net.collective.enchanced.common.mixin.enchantment_table;
 
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import moriyashiine.enchancement.client.gui.screen.ingame.EnchantingTableScreen;
 import moriyashiine.enchancement.common.Enchancement;
 import moriyashiine.enchancement.common.screenhandler.EnchantingTableScreenHandler;
 import moriyashiine.enchancement.common.util.EnchancementUtil;
 import moriyashiine.strawberrylib.api.module.SLibClientUtils;
+import moriyashiine.strawberrylib.api.module.SLibUtils;
 import net.collective.enchanced.Enchanced;
 import net.collective.enchanced.common.util.EnchantUtils;
 import net.collective.enchanced.common.util.StringUtil;
@@ -34,6 +36,7 @@ import org.jspecify.annotations.NonNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -391,5 +394,16 @@ public abstract class EnchantingTableScreenMixin {
         ClientWorld clientWorld = client.world;
         long time = clientWorld == null ? 0 : clientWorld.getTime();
         return StringUtil.scrollingTextFromTime(textRenderer, MAX_ENCHANTMENT_NAME_WIDTH, fullName, time, 10d);
+    }
+
+    @WrapOperation(
+            method = "drawChiseledModeWarning",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/gui/DrawContext;drawTooltip(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/text/Text;II)V"
+            )
+    )
+    private void drawChiseledModeWarning$wrapTooltipLines(DrawContext instance, TextRenderer textRenderer, Text text, int x, int y, Operation<Void> original) {
+        instance.drawTooltip(textRenderer, SLibClientUtils.wrapText(text, 220), x, y);
     }
 }
