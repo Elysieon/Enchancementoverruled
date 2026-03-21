@@ -89,7 +89,7 @@ public class LungeComponent implements CommonTickingComponent {
                 }
 
                 this.player.setVelocity(this.dashDirection.multiply(this.getDashProgress()));
-                SpearUtil.attack(player, 1f, this::sync);
+                SpearUtil.attack(player, 0.85f, this::sync);
             }
         }
         this.sync();
